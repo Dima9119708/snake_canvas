@@ -2,14 +2,16 @@ import '@babel/polyfill'
 import './styles.scss'
 import snakeSprite from './Snake.png'
 
-const WIDTH = 300
+const WIDTH = 600
 const HEIGHT = 300
-const DPI_HEIGHT = HEIGHT
-const DPI_WIDTH = WIDTH
+
+const DPI_HEIGHT = HEIGHT * 1.2
+const DPI_WIDTH = WIDTH * 1.2
 
 const BLOCK_SIZE = 20
-const BLOCKS_X = DPI_WIDTH / BLOCK_SIZE
-const BLOCKS_Y = DPI_HEIGHT / BLOCK_SIZE
+
+const BLOCKS_X = Math.floor(DPI_WIDTH / BLOCK_SIZE)
+const BLOCKS_Y = Math.floor(DPI_HEIGHT / BLOCK_SIZE)
 
 const FIELD = []
 const EMPTY = ''
@@ -68,14 +70,14 @@ function setupFood() {
         foodY = Math.floor( Math.random() * FIELD.length )
         foodX = Math.floor( Math.random() * FIELD[foodY].length )
 
-        FIELD[foodX][foodY] = FOOD
+        FIELD[foodY][foodX] = FOOD
 
         randomFood = false
 
         return
     }
 
-    FIELD[foodX][foodY] = FOOD
+    FIELD[foodY][foodX] = FOOD
 }
 
 function setupSnake() {
@@ -83,15 +85,13 @@ function setupSnake() {
 }
 
 function setupScore() {
-    if (snakeX === foodY && snakeY === foodX) {
+    if (snakeX === foodX && snakeY === foodY) {
         score += 1
         randomFood = true
     }
 }
 
 function draw() {
-    snakeBody.forEach(([x, y]) => FIELD[y][x] = SNAKE_BODY)
-
     for (let y = 0; y < FIELD.length; y++) {
         for (let x = 0; x < FIELD[y].length; x++) {
             drawImage(48, 48, x, y)
@@ -142,6 +142,29 @@ function setupSnakeBody() {
     snakeBody.splice(score + DEFAULT_LENGTH, snakeBody.length)
 }
 
+function setupSnakeBodyFill() {
+    snakeBody.forEach(([x, y]) => FIELD[y][x] = SNAKE_BODY)
+}
+
+function checkFood() {
+    const cell = FIELD[foodY][foodX]
+
+    if (cell === SNAKE_BODY)
+        randomFood = true
+}
+
+function checkSnake() {
+    snakeBody.forEach(([x, y]) => {
+        if (snakeX === x && snakeY === y) {
+            score = 0
+            snakeBody.length = 0
+            snakeX = 0
+            snakeY = 0
+            direction = arrowRight
+        }
+    })
+}
+
 function render() {
     clearCanvas()
 
@@ -149,8 +172,12 @@ function render() {
     setupFood()
     setupSnake()
     setupScore()
+    setupSnakeBodyFill()
 
     draw()
+
+    checkFood()
+    checkSnake()
 
     requestAnimationFrame(render)
 }
@@ -167,12 +194,12 @@ function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
         nextX === 0 &&
         prevY === 0 &&
         currentY === 0 &&
-        nextY === BLOCKS_X - 1
+        nextY === BLOCKS_Y - 1
         ||
         prevX === 0 &&
         currentX === 0 &&
         nextX === BLOCKS_X - 1 &&
-        prevY === BLOCKS_X - 1 &&
+        prevY === BLOCKS_Y - 1 &&
         currentY === 0 &&
         nextY === 0
     ) {
@@ -182,16 +209,16 @@ function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
         prevX === BLOCKS_X - 1 &&
         currentX === 0 &&
         nextX === 0 &&
-        prevY === BLOCKS_X - 1 &&
-        currentY === BLOCKS_X - 1 &&
+        prevY === BLOCKS_Y - 1 &&
+        currentY === BLOCKS_Y - 1 &&
         nextY === 0
         ||
         prevX === 0 &&
         currentX === 0 &&
         nextX === BLOCKS_X - 1 &&
         prevY === 0 &&
-        currentY === BLOCKS_X - 1 &&
-        nextY === BLOCKS_X - 1
+        currentY === BLOCKS_Y - 1 &&
+        nextY === BLOCKS_Y - 1
     ) {
         drawImage(32, 32, currentX, currentY)
     }
@@ -201,12 +228,12 @@ function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
         nextX === BLOCKS_X - 1 &&
         prevY === 0 &&
         currentY === 0 &&
-        nextY === BLOCKS_X - 1
+        nextY === BLOCKS_Y - 1
         ||
         prevX === BLOCKS_X - 1 &&
         currentX === BLOCKS_X - 1 &&
         nextX === 0 &&
-        prevY === BLOCKS_X - 1 &&
+        prevY === BLOCKS_Y - 1 &&
         currentY === 0 &&
         nextY === 0
     ) {
@@ -216,16 +243,16 @@ function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
         prevX === 0 &&
         currentX === BLOCKS_X - 1 &&
         nextX === BLOCKS_X - 1 &&
-        prevY === BLOCKS_X - 1 &&
-        currentY === BLOCKS_X - 1 &&
+        prevY === BLOCKS_Y - 1 &&
+        currentY === BLOCKS_Y - 1 &&
         nextY === 0
         ||
         prevX === BLOCKS_X - 1 &&
         currentX === BLOCKS_X - 1 &&
         nextX === 0 &&
         prevY === 0 &&
-        currentY === BLOCKS_X - 1 &&
-        nextY === BLOCKS_X - 1
+        currentY === BLOCKS_Y - 1 &&
+        nextY === BLOCKS_Y - 1
     ) {
         drawImage(17, 32, currentX, currentY)
     }
@@ -437,7 +464,6 @@ function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
 
     return twist
 }
-
 function drawSnakeVertical(prevX, currentX, nextX, prevY, currentY, nextY) {
     if (prevX === currentX &&
         prevX === nextX &&
@@ -499,10 +525,10 @@ function drawSnakeTail(prevX, currentX, prevY, currentY) {
     else if (prevX === BLOCKS_X - 1 && currentX === 0) {
         drawImage(48, 16, currentX, currentY)
     }
-    else if (prevY === BLOCKS_X - 1 && currentY === 0) {
+    else if (prevY === BLOCKS_Y - 1 && currentY === 0) {
         drawImage(0, 16, currentX, currentY)
     }
-    else if (prevY === 0 && currentY === BLOCKS_X - 1) {
+    else if (prevY === 0 && currentY === BLOCKS_Y - 1) {
         drawImage(32, 16, currentX, currentY)
     }
     else if (prevX === currentX && prevY < currentY) {
@@ -525,12 +551,10 @@ function drawImage(sx = 0, sy = 0, dx = 0, dy = 0) {
 
 function keyDown(e) {
     e.preventDefault();
-
     direction = moveDirection(e.code)
 
     setupSnakeBody()
     move(direction)
-
 }
 
 function moveDirection(current) {
@@ -597,7 +621,3 @@ function move(str) {
             break;
     }
 }
-
-setInterval(() => {
-
-}, SPEED)
