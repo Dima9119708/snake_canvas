@@ -162,7 +162,75 @@ document.addEventListener('keydown', keyDown)
 function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
     let twist = false
 
-    if (prevX === BLOCKS_X - 1 &&
+    if( prevX === BLOCKS_X - 1 &&
+        currentX === 0 &&
+        nextX === 0 &&
+        prevY === 0 &&
+        currentY === 0 &&
+        nextY === BLOCKS_X - 1
+        ||
+        prevX === 0 &&
+        currentX === 0 &&
+        nextX === BLOCKS_X - 1 &&
+        prevY === BLOCKS_X - 1 &&
+        currentY === 0 &&
+        nextY === 0
+    ) {
+        drawImage(48, 32, currentX, currentY)
+    }
+    else if (
+        prevX === BLOCKS_X - 1 &&
+        currentX === 0 &&
+        nextX === 0 &&
+        prevY === BLOCKS_X - 1 &&
+        currentY === BLOCKS_X - 1 &&
+        nextY === 0
+        ||
+        prevX === 0 &&
+        currentX === 0 &&
+        nextX === BLOCKS_X - 1 &&
+        prevY === 0 &&
+        currentY === BLOCKS_X - 1 &&
+        nextY === BLOCKS_X - 1
+    ) {
+        drawImage(32, 32, currentX, currentY)
+    }
+    else if (
+        prevX === 0 &&
+        currentX === BLOCKS_X - 1 &&
+        nextX === BLOCKS_X - 1 &&
+        prevY === 0 &&
+        currentY === 0 &&
+        nextY === BLOCKS_X - 1
+        ||
+        prevX === BLOCKS_X - 1 &&
+        currentX === BLOCKS_X - 1 &&
+        nextX === 0 &&
+        prevY === BLOCKS_X - 1 &&
+        currentY === 0 &&
+        nextY === 0
+    ) {
+        drawImage(0, 32, currentX, currentY)
+    }
+    else if (
+        prevX === 0 &&
+        currentX === BLOCKS_X - 1 &&
+        nextX === BLOCKS_X - 1 &&
+        prevY === BLOCKS_X - 1 &&
+        currentY === BLOCKS_X - 1 &&
+        nextY === 0
+        ||
+        prevX === BLOCKS_X - 1 &&
+        currentX === BLOCKS_X - 1 &&
+        nextX === 0 &&
+        prevY === 0 &&
+        currentY === BLOCKS_X - 1 &&
+        nextY === BLOCKS_X - 1
+    ) {
+        drawImage(17, 32, currentX, currentY)
+    }
+    else if (
+        prevX === BLOCKS_X - 1 &&
         currentX === 0 &&
         nextX === 0 &&
         prevY === currentY &&
@@ -261,7 +329,6 @@ function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
     ) {
         drawImage(0, 32, currentX, currentY)
     }
-
     else if (
        currentX === nextX &&
        prevX < nextX &&
@@ -296,7 +363,6 @@ function drawSnakeTurn(prevX, currentX, nextX, prevY, currentY, nextY) {
     ) {
         drawImage(17, 32, currentX, currentY)
     }
-
     else if (prevX === currentX &&
         nextX > prevX &&
         nextX > currentX &&
@@ -464,6 +530,7 @@ function keyDown(e) {
 
     setupSnakeBody()
     move(direction)
+
 }
 
 function moveDirection(current) {
