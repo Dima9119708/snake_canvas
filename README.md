@@ -1,1 +1,1 @@
-(https://dima9119708.github.io/snake_canvas)
+https://dima9119708.github.io/snake_canvas
